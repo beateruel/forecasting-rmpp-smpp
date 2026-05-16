@@ -1,0 +1,62 @@
+# ========================
+# Python compiled files
+# ========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ========================
+# Virtual environments (do not upload)
+# ========================
+.env          # environment variables (credentials, local paths)
+venv/         # standard virtual environment
+.env/         # alternative env folder
+
+# ========================
+# Config backups and old versions
+# ========================
+config_*.json  # older config versions
+backup/        # backup folder
+
+# ========================
+# Old pipeline versions
+# (keep only stable pipeline.py)
+# ========================
+src/pipeline_v*.py
+
+# ========================
+# Input data
+# ========================
+input/*              # ignore everything by default
+!input/RMPP.csv      # include upstream data
+!input/SMPP.csv      # include supplier data
+
+# ========================
+# Outputs (do NOT upload results)
+# ========================
+output/
+
+# ========================
+# Logs
+# ========================
+*.log
+
+# ========================
+# IDE / system files
+# ========================
+.vscode/
+.idea/
+.vs/         # Visual Studio folder (important for Windows)
+.DS_Store
+
+# ========================
+# Notebook checkpoints
+# ========================
+.ipynb_checkpoints/
+
+# ========================
+# Temporary files
+# ========================
+*.tmp
+*.bak

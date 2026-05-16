@@ -1,0 +1,85 @@
+
+{
+  "input": {
+    "raw_prices_csv": "input/Oil_original.csv",    
+    // Path to the raw material price time series (RMPP).
+    // Must contain a date column and at least one price column.
+
+    "supplier_prices_csv": "input/PBT_historical_prices.csv",
+    // Path to the supplier-level price time series (SMPP).
+    // This series is typically short and irregular, as in SME contexts
+
+    "date_col": "Date",
+    // Name of the column containing the date information in both datasets.
+    "raw_col": "column_1",
+    // Name of the column in the raw materials dataset containing the RMPP values.
+    "supplier_col": "column"
+    // Name of the column in the supplier dataset containing the SMPP values.
+  },
+
+
+  "processing": {
+    "frequency": "M",
+    // Target frequency for resampling (M = monthly).
+    // Ensures temporal alignment between upstream (RMPP) and downstream (SMPP) series.
+
+    "interpolation": ["ffill", "linear"],    
+    // Two-step imputation strategy:
+    // 1) forward-fill for contractual price holds,
+    // 2) linear interpolation for longer gaps.
+
+    "train_end": "2024-06-30"    
+    // Final date used for training in rolling-origin evaluation.
+    // Observations after this date are reserved for testing.
+
+  },
+  "features": {
+    "lags": [1, 2, 3, 6],    
+    // Lag features used for both Stage 1 and Stage 2.
+    // Reflect short- and medium-term temporal memory.
+
+    "rolling_means": [3, 6]    
+    // Rolling-window statistics included as optional explanatory features.
+    // Capture smoothed trends and short-term dynamics.
+  },
+
+  "horizons": [1, 3, 6, 10],  
+ // Forecast horizons evaluated in Stage 1 (multi-step recursive forecasting).
+
+  "stage1_models": ["SES", "ARIMA", "RF", "XGB", "LGBM"],  
+  // Models used to forecast upstream raw material prices (RMPP).  
+  // Combination of statistical and machine-learning methods.
+
+  "stage2_models": ["Linear", "XGB"],  
+ // Models used to map predicted RMPP values to SMPP.
+  // Linear = interpretable baseline; XGB = nonlinear alternative.
+
+  "direct_models": ["SARIMAX", "XGB_EXOG"],  
+  // Upper-bound baselines predicting SMPP directly from observed RMPP.
+  // These do not include error propagation and serve as methodological benchmarks.
+    
+"uncertainty": {
+      "n_boot": 1000,      
+    // Number of bootstrap resamples for empirical prediction intervals.
+
+      "alpha_levels": [0.20, 0.05],      
+    // Nominal levels for 80% and 95% prediction intervals (1 - alpha).
+
+      "recenter": true,      
+    // Whether to recenter residuals before bootstrap sampling.
+    // Helps reduce bias in small-sample settings.
+
+      "random_state": 42,      
+    // Fixed seed for reproducibility.
+
+      "make_plots": true      
+    // Whether to generate plots of prediction intervals and diagnostics.
+
+    },    
+
+  "direct_horizons": [1]  
+  // Forecast horizons evaluated for direct baselines.
+  // Restricted to 1-step ahead due to limited SMPP data.
+
+}
+
