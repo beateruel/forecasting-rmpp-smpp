@@ -1,41 +1,91 @@
+# Forecasting RMPP→SMPP (Two-Stage & Direct)
 
-# Forecasting RMPP→SMPP (Two‑Stage & Direct)
+Forecasting framework for supplier material prices under upstream–downstream dependency and data scarcity conditions.
 
-This repository implements the forecasting pipelines described in the paper:
+This repository implements the forecasting pipelines presented in the paper:
 
-**"Multi‑Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity"**
+> **"Multi-Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity"**
 
-It compares:
+The framework compares:
 
 - **Two-stage pipelines (P1–P5)**  
-  (SES / ARIMA / RF / XGB / LGBM → Linear)
+  SES / ARIMA / RF / XGB / LGBM → Linear
 
 - **Direct baselines (P6–P7)**  
-  (SARIMAX, XGB with exogenous variables)
+  SARIMAX, XGB with exogenous variables
 
 All models are evaluated using **rolling-origin multi-horizon forecasting**.
 
 ---
 
-## Methodology
+# Repository Structure
 
-The pipeline follows these steps:
-
-1. Data loading and preprocessing  
-2. Monthly alignment + interpolation (forward-fill / linear)  
-3. Feature engineering (lagged RMPP features)  
-4. Multi-stage or direct forecasting  
-5. Rolling-origin evaluation  
-6. Performance evaluation:
-   - MAE, RMSE, MAPE  
-   - Prediction intervals (bootstrap)  
-   - Diebold–Mariano statistical tests  
+```bash
+.
+├── input/                # Input datasets
+├── output/
+│   ├── predictions/      # Forecast outputs per model/horizon
+│   └── results.xlsx      # Aggregated evaluation results
+├── config.json           # Experiment configuration
+├── run.py                # Main execution script
+├── requirements.txt
+└── README.md
+```
 
 ---
 
-## How to run
+# Methodology
 
-1. Place your input CSVs in `input/` and configure:
+The forecasting workflow consists of:
+
+1. Data loading and preprocessing  
+2. Monthly alignment and interpolation  
+3. Feature engineering using lagged RMPP variables  
+4. Multi-stage or direct forecasting  
+5. Rolling-origin evaluation  
+6. Performance assessment:
+   - MAE
+   - RMSE
+   - MAPE
+   - Prediction intervals (bootstrap)
+   - Diebold–Mariano statistical tests
+
+---
+
+# Model Design
+
+## Two-stage forecasting pipelines
+
+The proposed pipelines explicitly model the upstream–downstream dependency between:
+
+- **RMPP** → Raw Material Market Prices  
+- **SMPP** → Supplier Material Purchase Prices
+
+### Stage 1
+Forecast upstream raw material prices (RMPP).
+
+### Stage 2
+Predict supplier prices (SMPP) using forecasted upstream values.
+
+---
+
+## Direct forecasting baselines
+
+Direct models predict SMPP directly from observed lagged RMPP variables without explicit upstream forecasting.
+
+---
+
+## Multi-step forecasting
+
+Machine learning models implement recursive multi-step forecasting strategies for longer horizons.
+
+---
+
+# Configuration
+
+Configure experiments through `config.json`.
+
+Example:
 
 ```json
 {
@@ -61,60 +111,120 @@ The pipeline follows these steps:
   "direct_models": ["SARIMAX","XGB_EXOG"]
 }
 ```
-2. Run the pipeline
 
+---
+
+# Installation
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
+
+---
+
+# Run the Pipeline
+
+```bash
 python run.py --config config.json
+```
 
 ---
 
-## Check the outputs
+# Outputs
 
+The pipeline generates:
+
+```bash
 output/
-  ├── predictions/        # CSV per model and horizon
-  └── results.xlsx       # aggregated results
+├── predictions/
+└── results.xlsx
+```
 
-results.xlsx includes:
--  Summary_Table
--  Stage1_Results
--  Stage2_Results
--  PI_Coverage
--  DM_tests
--  Notes_Log
+The `results.xlsx` file includes:
+
+- Summary_Table
+- Stage1_Results
+- Stage2_Results
+- PI_Coverage
+- DM_tests
+- Notes_Log
 
 ---
 
- ## Model design
-Two-stage pipelines explicitly model upstream–downstream dependency
-- Stage 1: RMPP forecasting
-- Stage 2: SMPP prediction using forecasted upstream values
-- Direct models use only observed lagged RMPP
-- Multi-step forecasting is implemented via recursive strategy for ML models
+# Reproducibility
 
-----
+The framework has been designed to ensure reproducible forecasting experiments:
 
-## Reproducibility
-- Rolling-origin evaluation avoids information leakage  
-- Models are retrained at each forecast origin  
-- Features are constructed using only past data  
+- Rolling-origin evaluation avoids information leakage
+- Models are retrained at each forecast origin
+- Features use only historical information
 - Random seeds are fixed where applicable
 
 ---
 
-## Data availability
+# Data Availability
 
 The dataset used in this study is based on industrial data from a real SME use case.
 
-Due to confidentiality constraints, the original supplier price data (SMPP) cannot be publicly shared. However, the repository includes:
+Due to confidentiality constraints, the original supplier price dataset (SMPP) cannot be publicly shared.
 
-- Upstream raw material price data (RMPP), obtained from public sources
-- A modified version of the supplier price data
+This repository includes:
 
-The modified SMPP dataset has been constructed to preserve the statistical properties and temporal structure of the original data (e.g., variability, sparsity, and update patterns), while removing any sensitive information.
+- Public upstream raw material price data (RMPP)
+- A modified version of the supplier price dataset
 
-This ensures that:
-- The experimental setup can be fully reproduced  
-- The behavior of the forecasting pipelines remains representative of the real use case  
+The modified SMPP dataset preserves the statistical properties and temporal structure of the original data, including:
+
+- variability,
+- sparsity,
+- update patterns,
+- temporal dynamics.
+
+This allows:
+
+- reproducibility of the experimental setup,
+- representative benchmarking of forecasting pipelines,
+- methodological validation without disclosure of sensitive industrial information.
 
 Researchers interested in the original data may contact the authors subject to data access agreements.
 
+---
+
+# Citation
+
+If you use this repository in academic work, please cite:
+
+```bibtex
+@article{royo2026_multistage,
+  title={Multi-Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity},
+  author={Royo, Beatriz and others},
+  year={2026}
+}
+```
+
+---
+
+# Acknowledgements
+
+This work was developed at Fundación Zaragoza Logistics Center (ZLC)
+within the Horizon Europe project R3GROUP.
+
+This project has received funding from the European Union’s Horizon Europe research and innovation programme under Grant Agreement No. 101091869.
+
+Project reference:
+https://cordis.europa.eu/project/id/101091869
+
+---
+
+# Authors
+
+- Beatriz Royo  
+  Fundación Zaragoza Logistics Center (ZLC)
+
+---
+
+# License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
