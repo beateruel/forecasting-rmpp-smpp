@@ -17,7 +17,7 @@ venv/         # standard virtual environment
 # Config backups and old versions
 # ========================
 config_*.json  # older config versions
-backup/        # backup folder
+backup/*        # backup folder
 
 # ========================
 # Old pipeline versions
