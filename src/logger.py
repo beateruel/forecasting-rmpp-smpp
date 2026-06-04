@@ -5,7 +5,7 @@ import sys
 def get_logger(name: str) -> logging.Logger:
     logger = logging.getLogger(name)
     if logger.handlers:
-        return logger  # evita duplicados
+        return logger  # avoid duplications
 
     logger.setLevel(logging.INFO)
 

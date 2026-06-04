@@ -119,7 +119,7 @@ def compute_pis_for_dataframe(
         """
     assert {"y_true", "y_pred"}.issubset(df.columns), "Required columns: y_true, y_pred"
     out = df.copy()
-    # Generat intervals for each alpha (p.ej. 0.20 -> 80%)
+    # Generate intervals for each alpha (p.ej. 0.20 -> 80%)
     for alpha in levels:
         lo, hi = bootstrap_intervals(
             y_true=out["y_true"].values,
@@ -267,7 +267,7 @@ def discover_prediction_files(base_output: Path) -> List[Path]:
     #for pat in ("stage1_*.csv", "stage2_*.csv", "direct_*.csv"):
     for pat in ("stage2_*.csv", "direct_*.csv"):
         files.extend((base_output).glob(pat))
-    # filtra los _with_PI para no re-procesarlos
+    
     files = [p for p in files if not p.name.endswith("_with_PI.csv")]
     return sorted(files)
 
