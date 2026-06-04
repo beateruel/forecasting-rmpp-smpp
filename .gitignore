@@ -21,16 +21,16 @@ backup/        # backup folder
 
 # ========================
 # Old pipeline versions
-# (keep only stable pipeline.py)
 # ========================
 src/pipeline_v*.py
 
 # ========================
 # Input data
 # ========================
-input/*              # ignore everything by default
-!input/RMPP.csv      # include upstream data
-!input/SMPP.csv      # include supplier data
+input_full/*
+input/*              
+!input/RMPP.csv      
+!input/SMPP_synthetic.csv  
 
 # ========================
 # Outputs (do NOT upload results)
@@ -47,8 +47,10 @@ output/
 # ========================
 .vscode/
 .idea/
-.vs/         # Visual Studio folder (important for Windows)
+.vs/              
+*.vsidx           
 .DS_Store
+Thumbs.db        
 
 # ========================
 # Notebook checkpoints

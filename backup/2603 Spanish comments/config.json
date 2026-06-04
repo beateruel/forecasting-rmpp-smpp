@@ -1,0 +1,35 @@
+
+{
+  "input": {
+    "raw_prices_csv": "input/Oil_original.csv",
+    "supplier_prices_csv": "input/PBT_historical_prices.csv",
+    "date_col": "Date",
+    "raw_col": "column_1",
+    "supplier_col": "column"
+  },
+  "processing": {
+    "frequency": "M",
+    "interpolation": ["ffill", "linear"],
+    "train_end": "2024-06-30"
+  },
+  "features": {
+    "lags": [1, 2, 3, 6],
+    "rolling_means": [3, 6]
+  },
+  "horizons": [1, 3, 6, 10],
+  "stage1_models": ["SES", "ARIMA", "RF", "XGB", "LGBM"],
+  "stage2_models": ["Linear", "XGB"],
+  "direct_models": ["SARIMAX", "XGB_EXOG"],
+  
+"uncertainty": {
+      "n_boot": 1000,
+      "alpha_levels": [0.20, 0.05],
+      "recenter": true,
+      "random_state": 42,
+      "make_plots": true    
+    },
+    
+
+  "direct_horizons": [1]
+}
+

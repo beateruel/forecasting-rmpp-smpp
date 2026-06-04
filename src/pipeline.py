@@ -384,6 +384,9 @@ def run_pipeline(config_path: str = 'config.json') -> Dict:
     # Load configuration JSON with all settings (data paths, model lists, horizons, etc.)
     with open(config_path, 'r') as f:
         cfg = json.load(f)
+    print("\n===== CONFIG FILE =====")
+    print(cfg['input']['supplier_prices_csv'])
+    #input("Press Enter to continue...")
     
     # Load and clean raw input data:
     # Includes optional resampling and interpolation options defined in the config file.

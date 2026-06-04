@@ -2,7 +2,7 @@
 {
   "input": {
     "raw_prices_csv": "input/RMPP_input.csv",    
-    "supplier_prices_csv": "input/SMPP_input.csv",    
+    "supplier_prices_csv": "input/SMPP_synthetic.csv",    
     "date_col": "Date",
     "raw_col": "column_1",
     "supplier_col": "column"
