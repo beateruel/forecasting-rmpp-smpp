@@ -166,19 +166,35 @@ The framework has been designed to ensure reproducible forecasting experiments:
 
 # Data Availability
 
+
 The dataset used in this study is based on an industrial use case from a real SME.
 
-Due to confidentiality constraints, the underlying supplier price dataset (SMPP) cannot be publicly shared in its original form.
+Due to confidentiality constraints, the underlying supplier price dataset (SMPP) cannot be publicly shared.
 
 This repository includes:
 
 - Public upstream raw material price data (RMPP)
 - Supplier price data (SMPP) derived from the industrial dataset
 
-The dataset has been prepared for research purposes and reflects the key temporal and structural characteristics of the original industrial data, without disclosing sensitive company information.
+The shared SMPP data has been processed to limit the disclosure of sensitive industrial information. 
+However, the exact level of transformation and anonymization is subject to internal validation within the project consortium.
 
-Data access is restricted. The dataset is shared only for academic purposes and may be made available upon reasonable request, subject to partner approval and data access agreements.
+The dataset preserves key characteristics of the original time series, including:
 
+- variability,
+- sparsity,
+- update patterns,
+- temporal dynamics.
+
+This enables:
+
+- reproducibility of the experimental setup,
+- representative benchmarking of forecasting pipelines,
+- methodological validation in a realistic setting.
+
+Researchers interested in accessing the original data may contact the authors, subject to data access agreements and partner approval.
+
+---
 
 # Citation
 
@@ -187,9 +203,10 @@ If you use this repository in academic work, please cite:
 ```bibtex
 @article{royo2026_multistage,
   title={Forecasting Supply Chain Prices under Data Scarcity: A Multi-Stage Framework and Horizon-Dependent Trade-offs},
-  author={Royo, Beatriz and others},
+  author={Royo, Beatriz and de la Cruz, María Teresa},
   year={2026}
 }
+
 ```
 
 ---
@@ -209,6 +226,8 @@ https://cordis.europa.eu/project/id/101091869
 # Authors
 
 - Beatriz Royo  
+  Fundación Zaragoza Logistics Center (ZLC)
+- Maria Teresa de la Cruz  
   Fundación Zaragoza Logistics Center (ZLC)
 
 ---
