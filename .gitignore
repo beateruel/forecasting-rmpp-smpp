@@ -29,8 +29,8 @@ src/pipeline_v*.py
 # ========================
 input_full/*
 input/*              
-!input/RMPP.csv      
-!input/SMPP_synthetic.csv  
+!input/RMPP_input.csv      
+input/SMPP_input.csv  
 
 # ========================
 # Outputs (do NOT upload results)

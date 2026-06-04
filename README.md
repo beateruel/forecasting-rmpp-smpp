@@ -166,31 +166,19 @@ The framework has been designed to ensure reproducible forecasting experiments:
 
 # Data Availability
 
-The dataset used in this study is based on industrial data from a real SME use case.
+The dataset used in this study is based on an industrial use case from a real SME.
 
-Due to confidentiality constraints, the original supplier price dataset (SMPP) cannot be publicly shared.
+Due to confidentiality constraints, the underlying supplier price dataset (SMPP) cannot be publicly shared in its original form.
 
 This repository includes:
 
 - Public upstream raw material price data (RMPP)
-- A modified version of the supplier price dataset
+- Supplier price data (SMPP) derived from the industrial dataset
 
-The modified SMPP dataset preserves the statistical properties and temporal structure of the original data, including:
+The dataset has been prepared for research purposes and reflects the key temporal and structural characteristics of the original industrial data, without disclosing sensitive company information.
 
-- variability,
-- sparsity,
-- update patterns,
-- temporal dynamics.
+Data access is restricted. The dataset is shared only for academic purposes and may be made available upon reasonable request, subject to partner approval and data access agreements.
 
-This allows:
-
-- reproducibility of the experimental setup,
-- representative benchmarking of forecasting pipelines,
-- methodological validation without disclosure of sensitive industrial information.
-
-Researchers interested in the original data may contact the authors subject to data access agreements.
-
----
 
 # Citation
 
@@ -198,7 +186,7 @@ If you use this repository in academic work, please cite:
 
 ```bibtex
 @article{royo2026_multistage,
-  title={Multi-Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity},
+  title={Forecasting Supply Chain Prices under Data Scarcity: A Multi-Stage Framework and Horizon-Dependent Trade-offs},
   author={Royo, Beatriz and others},
   year={2026}
 }
