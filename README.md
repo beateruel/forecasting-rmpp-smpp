@@ -1,8 +1,13 @@
 # Forecasting RMPP→SMPP (Two-Stage & Direct)
 
-Forecasting framework for supplier material prices under upstream–downstream dependency and data scarcity conditions.
+Forecasting framework for supplier material prices under upstream–downstream dependency and data-scarce industrial environments. 
+The repository contains the complete implementation of the forecasting framework proposed in:
 
-This repository implements the forecasting pipelines presented in the paper:
+"Multi-Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity"
+
+The framework compares direct and two-stage forecasting architectures under realistic industrial conditions characterized by limited supplier price observations and strong upstream–downstream dependencies.s.
+
+The repository reproduces the methodology and computational workflow described in the paper. Due to industrial confidentiality restrictions, the original supplier price dataset used for the empirical evaluation is not distributed:
 
 > **"Multi-Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity"**
 
@@ -165,34 +170,25 @@ The framework has been designed to ensure reproducible forecasting experiments:
 ---
 
 # Data Availability
+The forecasting framework was developed and evaluated using a real industrial case study involving supplier material purchase prices (SMPP) and upstream raw material market prices (RMPP).
 
+The upstream RMPP series is publicly available from the U.S. Energy Information Administration (EIA). However, the downstream SMPP series consists of proprietary supplier price records obtained through an industrial collaboration and is subject to confidentiality agreements.
 
-The dataset used in this study is based on an industrial use case from a real SME.
+For this reason, the original SMPP dataset cannot be publicly released.
 
-Due to confidentiality constraints, the underlying supplier price dataset (SMPP) cannot be publicly shared.
+To support transparency and reproducibility, this repository provides:
 
-This repository includes:
+- Complete source code for all forecasting pipelines.
+- Experimental configuration files.
+- Data preprocessing procedures.
+- Feature engineering workflow.
+- Rolling-origin evaluation framework.
+- Prediction interval generation procedures.
+- Statistical comparison procedures based on the Diebold–Mariano test.
 
-- Public upstream raw material price data (RMPP)
-- Supplier price data (SMPP) derived from the industrial dataset
+The repository enables full reproduction of the computational workflow and experimental protocol. Researchers may apply the framework to alternative datasets to validate and extend the proposed methodology.
 
-The shared SMPP data has been processed to limit the disclosure of sensitive industrial information. 
-However, the exact level of transformation and anonymization is subject to internal validation within the project consortium.
-
-The dataset preserves key characteristics of the original time series, including:
-
-- variability,
-- sparsity,
-- update patterns,
-- temporal dynamics.
-
-This enables:
-
-- reproducibility of the experimental setup,
-- representative benchmarking of forecasting pipelines,
-- methodological validation in a realistic setting.
-
-Researchers interested in accessing the original data may contact the authors, subject to data access agreements and partner approval.
+The results reported in the associated publication were obtained using the proprietary industrial dataset described in the paper.
 
 ---
 

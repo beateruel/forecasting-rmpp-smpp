@@ -23,17 +23,18 @@ backup/*        # backup folder
 # Old pipeline versions
 # ========================
 src/pipeline_v*.py
+backup
 
 # ========================
 # Input data
 # ========================
-input_full/*
+input_full
 input/*              
 !input/RMPP_input.csv      
 input/SMPP_input.csv  
 
 # ========================
-# Outputs (do NOT upload results)
+# Outputs
 # ========================
 output/
 
