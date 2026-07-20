@@ -114,6 +114,7 @@ Example:
 ```
 
 The rolling_means field is optional and supported by the pipeline, but was left empty ([]) in the experiments reported in the paper to keep the feature set simple and reduce overfitting risk in this data-scarce setting, consistent with Section 3.4 of the manuscript. Users may enable rolling means (e.g., [3,6]) for their own experiments.
+
 ---
 
 # Installation
