@@ -3,13 +3,9 @@
 Forecasting framework for supplier material prices under upstream–downstream dependency and data-scarce industrial environments. 
 The repository contains the complete implementation of the forecasting framework proposed in:
 
-"Multi-Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity"
+"Forecasting Supplier Prices under Data Scarcity: A Two-Stage Framework and Horizon-Dependent Trade-offs"
 
-The framework compares direct and two-stage forecasting architectures under realistic industrial conditions characterized by limited supplier price observations and strong upstream–downstream dependencies.s.
-
-The repository reproduces the methodology and computational workflow described in the paper. Due to industrial confidentiality restrictions, the original supplier price dataset used for the empirical evaluation is not distributed:
-
-> **"Multi-Stage Forecasting of Supplier Material Prices under Upstream–Downstream Dependency and Data Scarcity"**
+The framework compares direct and two-stage forecasting architectures under realistic industrial conditions characterized by limited supplier price observations and strong upstream–downstream dependencies.
 
 The framework compares:
 
@@ -27,7 +23,7 @@ All models are evaluated using **rolling-origin multi-horizon forecasting**.
 
 ```bash
 .
-├── input/                # Input datasets
+├── input/                # Public RMPP data and SMPP data template (proprietary SMPP not included)
 ├── output/
 │   ├── predictions/      # Forecast outputs per model/horizon
 │   └── results.xlsx      # Aggregated evaluation results
@@ -108,7 +104,7 @@ Example:
   },
   "features": {
     "lags": [1,2,3,6],
-    "rolling_means": [3,6]
+    "rolling_means": []
   },
   "horizons": [1,3,6],
   "stage1_models": ["SES","ARIMA","RF","XGB","LGBM"],
@@ -117,6 +113,7 @@ Example:
 }
 ```
 
+The rolling_means field is optional and supported by the pipeline, but was left empty ([]) in the experiments reported in the paper to keep the feature set simple and reduce overfitting risk in this data-scarce setting, consistent with Section 3.4 of the manuscript. Users may enable rolling means (e.g., [3,6]) for their own experiments.
 ---
 
 # Installation
@@ -198,7 +195,7 @@ If you use this repository in academic work, please cite:
 
 ```bibtex
 @article{royo2026_multistage,
-  title={Forecasting Supply Chain Prices under Data Scarcity: A Multi-Stage Framework and Horizon-Dependent Trade-offs},
+  title={Forecasting Supplier Prices under Data Scarcity: A Two-Stage Framework and Horizon-Dependent Trade-offs},
   author={Royo, Beatriz and de la Cruz, María Teresa},
   year={2026}
 }
@@ -223,11 +220,11 @@ https://cordis.europa.eu/project/id/101091869
 
 - Beatriz Royo  
   Fundación Zaragoza Logistics Center (ZLC)
-- Maria Teresa de la Cruz  
+- Maria Teresa de la Cruz Eiriz
   Fundación Zaragoza Logistics Center (ZLC)
 
 ---
 
 # License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.git 
+This project is licensed under the MIT License. See the `LICENSE` file for details.
