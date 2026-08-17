@@ -31,7 +31,7 @@ backup
 input_full
 input/*              
 !input/RMPP_input.csv      
-input/SMPP_input.csv  
+!input/SMPP_input.csv  
 
 # ========================
 # Outputs
