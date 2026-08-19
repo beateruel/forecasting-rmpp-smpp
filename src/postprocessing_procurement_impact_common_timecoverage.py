@@ -54,6 +54,7 @@ from typing import Iterable
 
 import numpy as np
 import pandas as pd
+from scipy.stats import beta, binomtest
 
 
 def project_root() -> Path:
@@ -320,7 +321,166 @@ def analyse_prediction_file(
         pd.concat(detail_parts, ignore_index=True),
         pd.DataFrame(summary_rows),
     )
+def compute_recall_confidence_intervals(
+    summary: pd.DataFrame,
+    threshold: float = 0.05,
+    selected_models: tuple[str, ...] = (
+        "SARIMAX",
+        "ARIMA->Linear",
+        "RF->Linear",
+    ),
+    alpha: float = 0.05,
+) -> pd.DataFrame:
+    """
+    Compute exact Clopper-Pearson 95% confidence intervals for crossing recall.
 
+    The analysis is restricted to the primary decision threshold (5%) and
+    selected representative architectures.
+    """
+    x = summary[
+        np.isclose(summary["Threshold"], threshold)
+        & summary["Model"].isin(selected_models)
+    ].copy()
+
+    rows = []
+
+    for _, row in x.iterrows():
+        k = int(row["CorrectCrossings"])
+        n = int(row["ActualCrossings"])
+
+        if n == 0:
+            recall = np.nan
+            ci_low = np.nan
+            ci_high = np.nan
+        else:
+            recall = k / n
+
+            ci_low = (
+                0.0
+                if k == 0
+                else beta.ppf(alpha / 2, k, n - k + 1)
+            )
+
+            ci_high = (
+                1.0
+                if k == n
+                else beta.ppf(1 - alpha / 2, k + 1, n - k)
+            )
+
+        rows.append(
+            {
+                "Horizon": int(row["Horizon"]),
+                "Threshold": threshold,
+                "Threshold_pct": threshold * 100,
+                "Architecture": row["Architecture"],
+                "Model": row["Model"],
+                "N": int(row["N"]),
+                "ActualCrossings": n,
+                "CorrectCrossings": k,
+                "CrossingsDetected": f"{k}/{n}",
+                "Recall": recall,
+                "Recall_pct": recall * 100 if not pd.isna(recall) else np.nan,
+                "CI_lower_95": ci_low,
+                "CI_upper_95": ci_high,
+                "CI_lower_95_pct": ci_low * 100 if not pd.isna(ci_low) else np.nan,
+                "CI_upper_95_pct": ci_high * 100 if not pd.isna(ci_high) else np.nan,
+            }
+        )
+
+    return (
+        pd.DataFrame(rows)
+        .sort_values(["Horizon", "Architecture", "Model"])
+        .reset_index(drop=True)
+    )
+
+def compute_mcnemar_tests(
+    detail: pd.DataFrame,
+    threshold: float = 0.05,
+    reference_model: str = "SARIMAX",
+    comparison_models: tuple[str, ...] = (
+        "ARIMA->Linear",
+        "RF->Linear",
+    ),
+) -> pd.DataFrame:
+    """
+    Exact paired McNemar tests for detection of actual threshold crossings.
+
+    Only observations where ActualCrossing == True are considered.
+    Models are paired by Horizon and TargetDate.
+    """
+    x = detail[
+        np.isclose(detail["Threshold"], threshold)
+        & detail["Model"].isin((reference_model,) + comparison_models)
+        & detail["ActualCrossing"]
+    ].copy()
+
+    rows = []
+
+    for h in sorted(x["Horizon"].unique()):
+        h_df = x[x["Horizon"] == h]
+
+        pivot = h_df.pivot_table(
+            index="TargetDate",
+            columns="Model",
+            values="PredictedCrossing",
+            aggfunc="first",
+        )
+
+        for comparison_model in comparison_models:
+            if (
+                reference_model not in pivot.columns
+                or comparison_model not in pivot.columns
+            ):
+                continue
+
+            paired = pivot[
+                [reference_model, comparison_model]
+            ].dropna()
+
+            a = paired[reference_model].astype(bool)
+            b = paired[comparison_model].astype(bool)
+
+            both_detect = int((a & b).sum())
+            reference_only = int((a & ~b).sum())
+            comparison_only = int((~a & b).sum())
+            neither_detect = int((~a & ~b).sum())
+
+            discordant = reference_only + comparison_only
+
+            if discordant == 0:
+                p_value = 1.0
+            else:
+                # Exact two-sided McNemar test:
+                # under H0, each discordant pair has p = 0.5
+                p_value = binomtest(
+                    min(reference_only, comparison_only),
+                    n=discordant,
+                    p=0.5,
+                    alternative="two-sided",
+                ).pvalue
+
+            rows.append(
+                {
+                    "Horizon": int(h),
+                    "Threshold": threshold,
+                    "Threshold_pct": threshold * 100,
+                    "ReferenceModel": reference_model,
+                    "ComparisonModel": comparison_model,
+                    "ActualCrossings": len(paired),
+                    "BothDetect": both_detect,
+                    "ReferenceOnly": reference_only,
+                    "ComparisonOnly": comparison_only,
+                    "NeitherDetect": neither_detect,
+                    "DiscordantPairs": discordant,
+                    "McNemar_exact_p": p_value,
+                }
+            )
+
+    return (
+        pd.DataFrame(rows)
+        .sort_values(["Horizon", "ComparisonModel"])
+        .reset_index(drop=True)
+    )
 
 def export_results(
     detail: pd.DataFrame,
@@ -356,6 +516,21 @@ def export_results(
             "[INFO] openpyxl is not installed; Excel export skipped. "
             "The CSV files contain the complete analysis."
         )
+def export_inferential_results(
+    ci_df: pd.DataFrame,
+    mcnemar_df: pd.DataFrame,
+    output_dir: Path,
+) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    ci_path = output_dir / "ci.xlsx"
+    mcnemar_path = output_dir / "mcnemar.xlsx"
+
+    ci_df.to_excel(ci_path, index=False, engine="openpyxl")
+    mcnemar_df.to_excel(mcnemar_path, index=False, engine="openpyxl")
+
+    print(f"[OK] Recall CI   : {ci_path}")
+    print(f"[OK] McNemar    : {mcnemar_path}")
 
 
 def parse_args() -> argparse.Namespace:
@@ -486,6 +661,21 @@ def main() -> None:
     detail_df["PredictedChange_pct"] = detail_df["PredictedChange"] * 100
 
     export_results(detail_df, summary_df, coverage_dates_df, output_dir)
+    ci_df = compute_recall_confidence_intervals(
+        summary_df,
+        threshold=0.05,
+    )
+
+    mcnemar_df = compute_mcnemar_tests(
+        detail_df,
+        threshold=0.05,
+    )
+
+    export_inferential_results(
+        ci_df,
+        mcnemar_df,
+        output_dir,
+    )
 
     print("\nAnalysis completed using COMMON TIME COVERAGE.")
     print(

@@ -5,7 +5,8 @@ The repository contains the complete implementation of the forecasting framework
 
 "Forecasting Supplier Prices under Data Scarcity: A Two-Stage Framework and Horizon-Dependent Trade-offs"
 
-The framework compares direct and two-stage forecasting architectures under realistic industrial conditions characterized by limited supplier price observations and strong upstream–downstream dependencies.
+The framework compares direct and two-stage forecasting architectures under realistic industrial conditions characterized by limited supplier price observations and strong upstream–downstream dependencies. 
+In addition to conventional forecast evaluation, the framework includes a decision-oriented assessment of the ability to anticipate procurement-relevant supplier price increases.
 
 The framework compares:
 
@@ -42,7 +43,7 @@ The forecasting workflow consists of:
 1. Data loading and preprocessing  
 2. Monthly alignment and interpolation  
 3. Feature engineering using lagged RMPP variables  
-4. Multi-stage or direct forecasting  
+4. Two-stage or direct forecasting  
 5. Rolling-origin evaluation  
 6. Performance assessment:
    - MAE
@@ -50,6 +51,12 @@ The forecasting workflow consists of:
    - MAPE
    - Prediction intervals (bootstrap)
    - Diebold–Mariano statistical tests
+7. Decision-oriented evaluation:
+   - Procurement-relevant price threshold detection
+   - Correct and missed threshold crossings
+   - Recall
+   - Exact Clopper–Pearson confidence intervals
+   - Exact McNemar paired tests
 
 ---
 
@@ -79,6 +86,15 @@ Direct models predict SMPP directly from observed lagged RMPP variables without 
 ## Multi-step forecasting
 
 Machine learning models implement recursive multi-step forecasting strategies for longer horizons.
+
+---
+## Decision-oriented evaluation
+
+In addition to conventional point-forecast evaluation, the framework assesses whether forecasts anticipate supplier price increases exceeding procurement-relevant decision thresholds.
+The 5% threshold represents the primary decision threshold in the industrial use case. Alternative 3% and 10% thresholds are included for sensitivity analysis.
+Threshold-crossing performance is evaluated using raw event counts and recall. For the primary 5% threshold, exact Clopper–Pearson confidence intervals and exact McNemar paired tests are used to account
+for the limited number of observed crossing events and to compare detection performance across forecasting architectures.
+
 
 ---
 
@@ -141,8 +157,15 @@ The pipeline generates:
 
 ```bash
 output/
-├── predictions/
-└── results.xlsx
+├── predictions/                         # Forecast outputs per model and horizon
+├── results.xlsx                         # Aggregated forecasting evaluation results
+└── procurement_impact_common_timecoverage/
+    ├── procurement_impact_common_timecoverage_summary.csv
+    ├── procurement_impact_common_timecoverage_detail.csv
+    ├── procurement_impact_common_timecoverage_dates.csv
+    ├── procurement_impact_common_timecoverage_analysis.xlsx
+    ├── ci.xlsx
+    └── mcnemar.xlsx
 ```
 
 The `results.xlsx` file includes:
@@ -154,6 +177,15 @@ The `results.xlsx` file includes:
 - DM_tests
 - Notes_Log
 
+The `procurement_impact_common_timecoverage` folder contains the decision-oriented post-processing analysis:
+
+- summary.csv: threshold-crossing metrics by model, horizon, and threshold
+- detail.csv: observation-level threshold-crossing results
+- dates.csv: common forecast target dates used across models
+- analysis.xlsx: consolidated summary, detail, and common-date sheets
+- ci.xlsx: exact 95% Clopper–Pearson confidence intervals for recall at the 5% threshold
+- mcnemar.xlsx: exact paired McNemar comparisons between representative forecasting configurations
+
 ---
 
 # Reproducibility
@@ -164,6 +196,8 @@ The framework has been designed to ensure reproducible forecasting experiments:
 - Models are retrained at each forecast origin
 - Features use only historical information
 - Random seeds are fixed where applicable
+- Decision-oriented comparisons are performed on matched forecast origins
+- Threshold definitions and representative model comparisons are fixed consistently across horizons
 
 ---
 
@@ -183,6 +217,8 @@ To support transparency and reproducibility, this repository provides:
 - Rolling-origin evaluation framework.
 - Prediction interval generation procedures.
 - Statistical comparison procedures based on the Diebold–Mariano test.
+- Decision-oriented threshold-crossing evaluation procedures.
+- Exact confidence interval and paired statistical testing procedures.
 
 The repository enables full reproduction of the computational workflow and experimental protocol. Researchers may apply the framework to alternative datasets to validate and extend the proposed methodology.
 
