@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Code and aggregated results for two-stage and direct supplier price forecasting"
+type: software
+version: v1.0.0
+doi: 10.5281/zenodo.23484546
+date-released: 2026-11-23
+license: MIT
+authors:
+  - family-names: Royo
+    given-names: Beatriz
+    affiliation: "Fundación Zaragoza Logistics Center (ZLC)"
+  - family-names: "de la Cruz Eiriz"
+    given-names: "María Teresa"
+    affiliation: "Fundación Zaragoza Logistics Center (ZLC)"
+abstract: "Python implementation of a two-stage forecasting framework (upstream commodity prices to supplier prices) and direct baselines (SARIMAX, XGBoost with exogenous variables), evaluated with rolling-origin multi-horizon forecasting, bootstrap prediction intervals, Diebold-Mariano tests and a decision-oriented threshold-crossing evaluation. The proprietary supplier series is not included; only the expected input format is provided."
+keywords:
+  - supplier price forecasting
+  - two-stage forecasting
+  - rolling-origin evaluation
+  - SARIMAX
+  - XGBoost
+  - procurement
